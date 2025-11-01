@@ -44,9 +44,15 @@ class GameState {
             this.inputHandler
         );
 
-        // TODO: Initialize DonkeyKong entity at level top when DonkeyKong class is implemented (issue #32)
-        // const dkPosition = { x: Constants.DK_X, y: Constants.DK_Y };
-        // this.donkeyKong = new DonkeyKong(dkPosition.x, dkPosition.y);
+        // Initialize DonkeyKong entity (issue #28)
+        this.donkeyKong = new DonkeyKong(Constants.DK_X, Constants.DK_Y);
+
+        // Initialize Princess entity (issue #28)
+        const princessPos = this.level.getPrincessPosition();
+        this.princess = new Princess(princessPos.x, princessPos.y);
+
+        // Initialize barrels array (issue #28)
+        this.barrels = [];
 
         // Score and lives (placeholders)
         this.score = 0;
@@ -71,11 +77,15 @@ class GameState {
         // Reset player to level start position
         this.player.reset(playerStart.x, playerStart.y);
 
-        // TODO: Reset DonkeyKong entity when DonkeyKong class is implemented
-        // const dkPosition = { x: Constants.DK_X, y: Constants.DK_Y };
-        // if (this.donkeyKong) {
-        //     this.donkeyKong.reset(dkPosition.x, dkPosition.y);
-        // }
+        // Reset DonkeyKong entity (issue #28)
+        this.donkeyKong = new DonkeyKong(Constants.DK_X, Constants.DK_Y);
+
+        // Reset Princess entity (issue #28)
+        const princessPos = this.level.getPrincessPosition();
+        this.princess = new Princess(princessPos.x, princessPos.y);
+
+        // Clear barrels array (issue #28)
+        this.barrels = [];
 
         // Reset game state
         this.currentState = Constants.STATE_PLAYING;
@@ -96,6 +106,23 @@ class GameState {
             this.level.getPlatforms(),
             this.level.getLadders()
         );
+
+        // Update DonkeyKong and handle barrel spawning (issue #28)
+        const shouldSpawnBarrel = this.donkeyKong.update(deltaTime);
+        if (shouldSpawnBarrel && this.barrels.length < Constants.MAX_BARRELS) {
+            this.spawnBarrel();
+        }
+
+        // Update Princess (issue #28)
+        this.princess.update(deltaTime);
+
+        // Update all barrels (issue #28)
+        for (const barrel of this.barrels) {
+            barrel.update(deltaTime, this.level.getPlatforms());
+        }
+
+        // Remove dead barrels (issue #28)
+        this.barrels = this.barrels.filter(barrel => barrel.isActive());
 
         // Keep player within bounds
         this.constrainPlayerToBounds();
@@ -135,6 +162,17 @@ class GameState {
 
         // Render level (platforms and ladders)
         this.level.render(renderer);
+
+        // Render DonkeyKong (issue #28)
+        this.donkeyKong.render(renderer);
+
+        // Render Princess (issue #28)
+        this.princess.render(renderer);
+
+        // Render barrels (issue #28)
+        for (const barrel of this.barrels) {
+            barrel.render(renderer);
+        }
 
         // Render player
         this.player.render(renderer);
@@ -201,12 +239,25 @@ class GameState {
         const playerStart = this.level.getPlayerStartPosition();
         this.player.reset(playerStart.x, playerStart.y);
 
-        // TODO: Reset DonkeyKong entity when DonkeyKong class is implemented
-        // if (this.donkeyKong) {
-        //     const dkPosition = { x: Constants.DK_X, y: Constants.DK_Y };
-        //     this.donkeyKong.reset(dkPosition.x, dkPosition.y);
-        // }
+        // Reset DonkeyKong entity (issue #28)
+        this.donkeyKong = new DonkeyKong(Constants.DK_X, Constants.DK_Y);
+
+        // Reset Princess entity (issue #28)
+        const princessPos = this.level.getPrincessPosition();
+        this.princess = new Princess(princessPos.x, princessPos.y);
+
+        // Clear barrels array (issue #28)
+        this.barrels = [];
 
         this.currentState = Constants.STATE_PLAYING;
+    }
+
+    /**
+     * Spawn a new barrel from DonkeyKong (issue #28)
+     */
+    spawnBarrel() {
+        const spawnPos = this.donkeyKong.getBarrelSpawnPosition();
+        const barrel = new Barrel(spawnPos.x, spawnPos.y);
+        this.barrels.push(barrel);
     }
 }
