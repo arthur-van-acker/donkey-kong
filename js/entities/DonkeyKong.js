@@ -25,7 +25,7 @@ class DonkeyKong {
 
         // Barrel throwing
         this.throwTimer = 0;
-        this.throwDelay = 3.0; // Throw barrel every 3 seconds
+        this.throwDelay = this.getRandomThrowDelay(); // Random delay between throws
 
         // State
         this.isThrowing = false;
@@ -84,6 +84,7 @@ class DonkeyKong {
 
         if (this.throwTimer >= this.throwDelay) {
             this.throwTimer = 0;
+            this.throwDelay = this.getRandomThrowDelay(); // Get new random delay
             this.isThrowing = true;
             // Return true to signal barrel spawn
             return true;
@@ -179,5 +180,15 @@ class DonkeyKong {
             width: this.width,
             height: this.height
         };
+    }
+
+    /**
+     * Get random throw delay for barrel spawning
+     * @returns {number} Random delay in seconds between min and max
+     */
+    getRandomThrowDelay() {
+        const min = Constants.BARREL_SPAWN_MIN_DELAY;
+        const max = Constants.BARREL_SPAWN_MAX_DELAY;
+        return min + Math.random() * (max - min);
     }
 }
