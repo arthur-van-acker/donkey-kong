@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.2] - 2025-11-01
+
+### Documentation
+- Added issue #18 references to platform collision code documentation
+- Formally closes issue #18 with proper code references
+
+### Notes
+- Platform collision functionality was already fully implemented across two releases:
+  - v0.9.0: Platform collision detection in Physics class
+  - v0.12.0: Player-platform collision integration
+- This is a documentation-only release with no functional changes
+- All acceptance criteria for issue #18 were already met:
+  - ✅ Player stands on platforms
+  - ✅ Player doesn't fall through platforms
+  - ✅ Platform snap alignment
+  - ✅ Set grounded flag when on platform
+  - ✅ Handle falling off platforms
+- Technical requirements already implemented:
+  - ✅ Use platform collision detection from issue #10
+  - ✅ Check all platforms in level
+  - ✅ Update velocity and position
+
 ## [0.15.1] - 2025-11-01
 
 ### Documentation
@@ -401,6 +423,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Project documentation: README.md
 - Git ignore rules for development environment
 
+[0.15.2]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.15.2
 [0.15.1]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.15.1
 [0.15.0]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.15.0
 [0.14.0]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.14.0
