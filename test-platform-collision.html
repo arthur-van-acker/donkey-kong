@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Collision Detection Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        .test {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #333;
+        }
+        .pass { color: #00ff00; }
+        .fail { color: #ff0000; }
+        h1, h2 { color: #00ccff; }
+        #canvas {
+            border: 1px solid #00ff00;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Platform Collision Detection Test Suite</h1>
+    <div id="results"></div>
+    <h2>Visual Test</h2>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <p>Red = On platform (grounded), Blue = In air (falling), Green = Platform</p>
+
+    <script src="js/utils/Constants.js"></script>
+    <script src="js/utils/Vector2D.js"></script>
+    <script src="js/systems/Physics.js"></script>
+    <script>
+        const results = document.getElementById('results');
+
+        function test(name, condition, details = '') {
+            const div = document.createElement('div');
+            div.className = 'test';
+            const status = condition ? '<span class="pass">✓ PASS</span>' : '<span class="fail">✗ FAIL</span>';
+            div.innerHTML = `${status} - ${name}${details ? '<br>' + details : ''}`;
+            results.appendChild(div);
+            return condition;
+        }
+
+        function testPlatformCollision() {
+            let passCount = 0;
+            let totalCount = 0;
+
+            // Test 1: checkPlatformCollision method exists
+            totalCount++;
+            if (test('checkPlatformCollision method exists',
+                typeof Physics.checkPlatformCollision === 'function')) {
+                passCount++;
+            }
+
+            // Test 2: Player standing on platform (downward velocity, player above platform)
+            totalCount++;
+            const player1 = {
+                position: { x: 100, y: 168 }, // Just above platform at y=170
+                velocity: { x: 0, y: 50 },    // Moving down
+                width: Constants.PLAYER_WIDTH,
+                height: Constants.PLAYER_HEIGHT
+            };
+            const platform1 = {
+                x: 50,
+                y: 170,
+                width: 200,
+                height: Constants.PLATFORM_HEIGHT
+            };
+            const result1 = Physics.checkPlatformCollision(player1, platform1);
+            if (test('Player moving down onto platform should collide',
+                result1 && result1.colliding === true,
+                `Result: ${JSON.stringify(result1)}`)) {
+                passCount++;
+            }
+
+            // Test 3: Player should snap to platform top
+            totalCount++;
+            const player2 = {
+                position: { x: 100, y: 168 },
+                velocity: { x: 0, y: 50 },
+                width: Constants.PLAYER_WIDTH,
+                height: Constants.PLAYER_HEIGHT
+            };
+            const platform2 = {
+                x: 50,
+                y: 170,
+                width: 200,
+                height: Constants.PLATFORM_HEIGHT
+            };
+            const result2 = Physics.checkPlatformCollision(player2, platform2);
+            if (test('Player should be snapped to platform top',
+                result2 && result2.colliding && result2.snapY === (platform2.y - player2.height),
+                `Expected snapY: ${platform2.y - player2.height}, Got: ${result2 ? result2.snapY : 'undefined'}`)) {
+                passCount++;
+            }
+
+            // Test 4: Player moving upward should not collide with platform from below
+            totalCount++;
+            const player3 = {
+                position: { x: 100, y: 200 }, // Below platform
+                velocity: { x: 0, y: -50 },   // Moving up
+                width: Constants.PLAYER_WIDTH,
+                height: Constants.PLAYER_HEIGHT
+            };
+            const platform3 = {
+                x: 50,
+                y: 170,
+                width: 200,
+                height: Constants.PLATFORM_HEIGHT
+            };
+            const result3 = Physics.checkPlatformCollision(player3, platform3);
+            if (test('Player moving upward should not collide with platform from below',
+                !result3 || result3.colliding === false,
+                `Result: ${JSON.stringify(result3)}`)) {
+                passCount++;
+            }
+
+            // Test 5: Player too far above platform should not collide
+            totalCount++;
+            const player4 = {
+                position: { x: 100, y: 100 }, // Far above platform
+                velocity: { x: 0, y: 50 },
+                width: Constants.PLAYER_WIDTH,
+                height: Constants.PLAYER_HEIGHT
+            };
+            const platform4 = {
+                x: 50,
+                y: 170,
+                width: 200,
+                height: Constants.PLATFORM_HEIGHT
+            };
+            const result4 = Physics.checkPlatformCollision(player4, platform4);
+            if (test('Player far above platform should not collide',
+                !result4 || result4.colliding === false)) {
+                passCount++;
+            }
+
+            // Test 6: Player not horizontally aligned with platform should not collide
+            totalCount++;
+            const player5 = {
+                position: { x: 300, y: 168 }, // Outside platform horizontal bounds
+                velocity: { x: 0, y: 50 },
+                width: Constants.PLAYER_WIDTH,
+                height: Constants.PLAYER_HEIGHT
+            };
+            const platform5 = {
+                x: 50,
+                y: 170,
+                width: 200,
+                height: Constants.PLATFORM_HEIGHT
+            };
+            const result5 = Physics.checkPlatformCollision(player5, platform5);
+            if (test('Player not horizontally aligned should not collide',
+                !result5 || result5.colliding === false)) {
+                passCount++;
+            }
+
+            // Test 7: Player on edge of platform should collide
+            totalCount++;
+            const player6 = {
+                position: { x: 230, y: 168 }, // Right edge of platform
+                velocity: { x: 0, y: 50 },
+                width: Constants.PLAYER_WIDTH,
+                height: Constants.PLAYER_HEIGHT
+            };
+            const platform6 = {
+                x: 50,
+                y: 170,
+                width: 200,
+                height: Constants.PLATFORM_HEIGHT
+            };
+            const result6 = Physics.checkPlatformCollision(player6, platform6);
+            if (test('Player on edge of platform should collide',
+                result6 && result6.colliding === true)) {
+                passCount++;
+            }
+
+            // Test 8: Player just past edge should not collide (falling off)
+            totalCount++;
+            const player7 = {
+                position: { x: 251, y: 168 }, // Just past right edge
+                velocity: { x: 0, y: 50 },
+                width: Constants.PLAYER_WIDTH,
+                height: Constants.PLAYER_HEIGHT
+            };
+            const platform7 = {
+                x: 50,
+                y: 170,
+                width: 200,
+                height: Constants.PLATFORM_HEIGHT
+            };
+            const result7 = Physics.checkPlatformCollision(player7, platform7);
+            if (test('Player past edge should not collide (falling off)',
+                !result7 || result7.colliding === false)) {
+                passCount++;
+            }
+
+            // Test 9: Null/invalid inputs should return safe value
+            totalCount++;
+            const result8 = Physics.checkPlatformCollision(null, platform1);
+            if (test('Null player should return null or false collision',
+                !result8 || result8.colliding === false)) {
+                passCount++;
+            }
+
+            // Test 10: Player velocity zero (standing) should still collide
+            totalCount++;
+            const player8 = {
+                position: { x: 100, y: 150 }, // Standing on platform
+                velocity: { x: 0, y: 0 },
+                width: Constants.PLAYER_WIDTH,
+                height: Constants.PLAYER_HEIGHT
+            };
+            const platform8 = {
+                x: 50,
+                y: 170,
+                width: 200,
+                height: Constants.PLATFORM_HEIGHT
+            };
+            const result9 = Physics.checkPlatformCollision(player8, platform8);
+            if (test('Player standing (zero velocity) should collide if above platform',
+                result9 && result9.colliding === true)) {
+                passCount++;
+            }
+
+            // Summary
+            const summary = document.createElement('div');
+            summary.className = 'test';
+            const percentage = Math.round((passCount / totalCount) * 100);
+            const summaryColor = percentage === 100 ? 'pass' : (percentage >= 70 ? '#ffaa00' : 'fail');
+            summary.innerHTML = `<h2 style="color: ${summaryColor}">Summary: ${passCount}/${totalCount} tests passed (${percentage}%)</h2>`;
+            results.appendChild(summary);
+        }
+
+        // Visual test
+        function visualTest() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Create test platforms
+            const platforms = [
+                { x: 50, y: 200, width: 200, height: Constants.PLATFORM_HEIGHT },
+                { x: 300, y: 300, width: 200, height: Constants.PLATFORM_HEIGHT },
+                { x: 550, y: 400, width: 200, height: Constants.PLATFORM_HEIGHT }
+            ];
+
+            // Create test players at different positions
+            const testPlayers = [
+                { position: { x: 100, y: 198 }, velocity: { x: 0, y: 50 }, width: 32, height: 48, label: 'Landing' },
+                { position: { x: 100, y: 100 }, velocity: { x: 0, y: 50 }, width: 32, height: 48, label: 'Falling' },
+                { position: { x: 350, y: 298 }, velocity: { x: 0, y: 0 }, width: 32, height: 48, label: 'Standing' },
+                { position: { x: 270, y: 298 }, velocity: { x: 0, y: -50 }, width: 32, height: 48, label: 'Jumping' },
+                { position: { x: 600, y: 398 }, velocity: { x: 50, y: 50 }, width: 32, height: 48, label: 'Edge' },
+                { position: { x: 760, y: 398 }, velocity: { x: 50, y: 50 }, width: 32, height: 48, label: 'Off Edge' }
+            ];
+
+            // Draw platforms
+            platforms.forEach(platform => {
+                ctx.fillStyle = '#00ff00';
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+            });
+
+            // Test each player against all platforms and draw results
+            testPlayers.forEach(player => {
+                let isGrounded = false;
+
+                // Check against all platforms
+                for (const platform of platforms) {
+                    const result = Physics.checkPlatformCollision(player, platform);
+                    if (result && result.colliding) {
+                        isGrounded = true;
+                        break;
+                    }
+                }
+
+                // Draw player with color based on grounded state
+                ctx.fillStyle = isGrounded ? '#ff0000' : '#0088ff';
+                ctx.fillRect(player.position.x, player.position.y, player.width, player.height);
+
+                // Draw label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '12px monospace';
+                ctx.fillText(player.label, player.position.x, player.position.y - 5);
+
+                // Draw velocity arrow
+                if (player.velocity.y !== 0) {
+                    const arrowStartX = player.position.x + player.width / 2;
+                    const arrowStartY = player.position.y + player.height / 2;
+                    const arrowEndY = arrowStartY + (player.velocity.y > 0 ? 20 : -20);
+
+                    ctx.strokeStyle = '#ffff00';
+                    ctx.beginPath();
+                    ctx.moveTo(arrowStartX, arrowStartY);
+                    ctx.lineTo(arrowStartX, arrowEndY);
+                    ctx.stroke();
+                }
+            });
+        }
+
+        // Run tests
+        testPlatformCollision();
+        visualTest();
+    </script>
+</body>
+</html>

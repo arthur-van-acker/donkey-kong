@@ -96,6 +96,67 @@ class Physics {
     }
 
     /**
+     * Checks for platform collision detection.
+     * Determines if a player is landing on or standing on a platform.
+     * Only triggers collision when player is above the platform and moving downward or stationary.
+     *
+     * @param {Object} player - The player entity
+     * @param {Object} player.position - Player position with x and y properties
+     * @param {Object} player.velocity - Player velocity with x and y properties
+     * @param {number} player.width - Player width
+     * @param {number} player.height - Player height
+     * @param {Object} platform - The platform entity
+     * @param {number} platform.x - Platform X position (top-left corner)
+     * @param {number} platform.y - Platform Y position (top-left corner)
+     * @param {number} platform.width - Platform width
+     * @param {number} platform.height - Platform height
+     * @returns {Object|null} Collision result object or null if no collision
+     * @returns {boolean} return.colliding - Whether player is on platform
+     * @returns {number} return.snapY - Y position to snap player to (top of platform)
+     */
+    static checkPlatformCollision(player, platform) {
+        // Validate input
+        if (!player || !platform || !player.position || !player.velocity) {
+            return { colliding: false, snapY: null };
+        }
+
+        // Player bounding box (bottom of player)
+        const playerLeft = player.position.x;
+        const playerRight = player.position.x + player.width;
+        const playerBottom = player.position.y + player.height;
+
+        // Platform bounding box
+        const platformLeft = platform.x;
+        const platformRight = platform.x + platform.width;
+        const platformTop = platform.y;
+
+        // Check horizontal overlap (player must be above platform horizontally)
+        const horizontalOverlap = playerRight > platformLeft && playerLeft < platformRight;
+
+        if (!horizontalOverlap) {
+            return { colliding: false, snapY: null };
+        }
+
+        // Check if player is above the platform (with tolerance for collision detection)
+        const tolerance = Constants.COLLISION_TOLERANCE;
+        const verticalDistance = platformTop - playerBottom;
+
+        // Player should be near or at the platform top, and not moving upward (jumping)
+        // Allow collision if player is slightly below platform top (for smooth landing)
+        const isNearPlatform = verticalDistance >= -tolerance && verticalDistance <= tolerance * 5;
+        const isMovingDownOrStationary = player.velocity.y >= 0;
+
+        if (isNearPlatform && isMovingDownOrStationary) {
+            return {
+                colliding: true,
+                snapY: platformTop - player.height
+            };
+        }
+
+        return { colliding: false, snapY: null };
+    }
+
+    /**
      * Checks for collision between two Axis-Aligned Bounding Boxes (AABBs).
      * Uses rectangle intersection to detect overlap and calculates penetration depth.
      *

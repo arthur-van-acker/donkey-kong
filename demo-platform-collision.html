@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Collision E2E Demo</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+            text-align: center;
+        }
+        #canvas {
+            border: 2px solid #00ff00;
+            margin: 20px auto;
+            display: block;
+            background: #000080;
+        }
+        .info {
+            color: #00ccff;
+            margin: 10px 0;
+        }
+        h1 { color: #00ccff; }
+    </style>
+</head>
+<body>
+    <h1>Platform Collision Detection E2E Demo</h1>
+    <div class="info">Use Arrow Keys to move, Space to jump</div>
+    <div class="info">Player should stand on platforms, not fall through, and snap to platform tops</div>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <div id="status" class="info"></div>
+
+    <script src="js/utils/Constants.js"></script>
+    <script src="js/utils/Vector2D.js"></script>
+    <script src="js/systems/Physics.js"></script>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const status = document.getElementById('status');
+
+        // Create platforms at different heights
+        const platforms = [
+            { x: 0, y: 550, width: 800, height: 50 },      // Ground
+            { x: 100, y: 400, width: 200, height: 20 },    // Platform 1
+            { x: 400, y: 300, width: 200, height: 20 },    // Platform 2
+            { x: 200, y: 200, width: 200, height: 20 },    // Platform 3
+            { x: 500, y: 100, width: 200, height: 20 }     // Platform 4
+        ];
+
+        // Create player
+        const player = {
+            position: { x: 100, y: 500 },
+            velocity: { x: 0, y: 0 },
+            width: 32,
+            height: 48,
+            grounded: false,
+            jumpStrength: -400,
+            moveSpeed: 200
+        };
+
+        // Keyboard input
+        const keys = {
+            left: false,
+            right: false,
+            up: false,
+            space: false
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') keys.left = true;
+            if (e.key === 'ArrowRight') keys.right = true;
+            if (e.key === 'ArrowUp') keys.up = true;
+            if (e.key === ' ') {
+                keys.space = true;
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft') keys.left = false;
+            if (e.key === 'ArrowRight') keys.right = false;
+            if (e.key === 'ArrowUp') keys.up = false;
+            if (e.key === ' ') keys.space = false;
+        });
+
+        let lastTime = performance.now();
+
+        function gameLoop(currentTime) {
+            const deltaTime = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+
+            update(Math.min(deltaTime, 0.1));
+            render();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update(deltaTime) {
+            // Handle horizontal movement
+            if (keys.left) {
+                player.velocity.x = -player.moveSpeed;
+            } else if (keys.right) {
+                player.velocity.x = player.moveSpeed;
+            } else {
+                player.velocity.x = 0;
+            }
+
+            // Handle jumping (only when grounded)
+            if (keys.space && player.grounded) {
+                player.velocity.y = player.jumpStrength;
+                player.grounded = false;
+            }
+
+            // Apply physics
+            Physics.applyGravity(player, deltaTime);
+            Physics.clampVelocity(player);
+
+            // Update position
+            player.position.x += player.velocity.x * deltaTime;
+            player.position.y += player.velocity.y * deltaTime;
+
+            // Reset grounded state
+            player.grounded = false;
+
+            // Check platform collisions
+            for (const platform of platforms) {
+                const collision = Physics.checkPlatformCollision(player, platform);
+
+                if (collision && collision.colliding) {
+                    // Snap player to platform top
+                    player.position.y = collision.snapY;
+                    player.velocity.y = 0;
+                    player.grounded = true;
+                    break; // Only collide with first platform found
+                }
+            }
+
+            // Wrap player horizontally
+            if (player.position.x < -player.width) {
+                player.position.x = canvas.width;
+            } else if (player.position.x > canvas.width) {
+                player.position.x = -player.width;
+            }
+
+            // Update status
+            status.textContent = `Position: (${Math.round(player.position.x)}, ${Math.round(player.position.y)}) | ` +
+                                 `Velocity: (${Math.round(player.velocity.x)}, ${Math.round(player.velocity.y)}) | ` +
+                                 `Grounded: ${player.grounded}`;
+        }
+
+        function render() {
+            // Clear canvas
+            ctx.fillStyle = '#000080';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw platforms
+            platforms.forEach(platform => {
+                ctx.fillStyle = '#00ff00';
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+
+                // Draw platform outline
+                ctx.strokeStyle = '#00ff00';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(platform.x, platform.y, platform.width, platform.height);
+            });
+
+            // Draw player (red if grounded, blue if in air)
+            ctx.fillStyle = player.grounded ? '#ff0000' : '#0088ff';
+            ctx.fillRect(player.position.x, player.position.y, player.width, player.height);
+
+            // Draw player outline
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(player.position.x, player.position.y, player.width, player.height);
+
+            // Draw velocity indicator
+            if (player.velocity.y !== 0) {
+                const centerX = player.position.x + player.width / 2;
+                const centerY = player.position.y + player.height / 2;
+                const arrowLength = Math.abs(player.velocity.y) / 10;
+                const arrowY = player.velocity.y > 0 ? centerY + arrowLength : centerY - arrowLength;
+
+                ctx.strokeStyle = '#ffff00';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(centerX, arrowY);
+                ctx.stroke();
+
+                // Arrow head
+                const headSize = 5;
+                ctx.beginPath();
+                if (player.velocity.y > 0) {
+                    ctx.moveTo(centerX, arrowY);
+                    ctx.lineTo(centerX - headSize, arrowY - headSize);
+                    ctx.moveTo(centerX, arrowY);
+                    ctx.lineTo(centerX + headSize, arrowY - headSize);
+                } else {
+                    ctx.moveTo(centerX, arrowY);
+                    ctx.lineTo(centerX - headSize, arrowY + headSize);
+                    ctx.moveTo(centerX, arrowY);
+                    ctx.lineTo(centerX + headSize, arrowY + headSize);
+                }
+                ctx.stroke();
+            }
+        }
+
+        // Start game loop
+        gameLoop(performance.now());
+    </script>
+</body>
+</html>
