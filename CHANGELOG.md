@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.0] - 2025-11-01
+
+### Added
+- **Level1 configuration class** with arcade-accurate classic Donkey Kong layout
+- 4-tier platform structure matching original arcade game:
+  - Ground platform (full width)
+  - Platform 1 with gap (left section: 0-550, right section: 700-width)
+  - Platform 2 (full width for princess escape path)
+  - Platform 3 with gap (left section: 0-580, right section: 730-width)
+  - Platform 4 (top platform for DK and princess)
+- 8 strategically placed ladders connecting all platform tiers:
+  - 2 ladders from ground to platform 1
+  - 2 ladders from platform 1 to platform 2
+  - 2 ladders from platform 2 to platform 3
+  - 2 ladders from platform 3 to platform 4
+- Static `Level1.create(level)` method for configuring Level instance
+- Static `Level1.getMetadata()` method returning level information:
+  - Level name, description, difficulty
+  - Platform count (7 segments), ladder count (8)
+  - hasGaps flag indicating broken platform structure
+- Broken platform design with gaps for ladder passages
+
+### Changed
+- Level class now delegates `createLevel1()` to `Level1.create(this)`
+- Level 1 layout separated from Level base class into dedicated configuration
+- `index.html` updated to include `Level1.js` before `Level.js`
+
+### Technical Details
+- Level1 class uses static methods (no instantiation required)
+- Configuration pattern allows easy addition of Level2, Level3, etc.
+- All platform and ladder dimensions use Constants values
+- Arcade-accurate spacing and positioning
+- Player starts at (100, PLATFORM_GROUND - 60)
+- Princess position uses Constants.PRINCESS_X and Constants.PRINCESS_Y
+- Gaps in platforms allow vertical movement through ladders
+- Layout matches classic Donkey Kong's iconic first level
+
+### Fixed
+- Level 1 layout now properly encapsulated in dedicated configuration class
+- Cleaner separation of concerns between Level architecture and level-specific layouts
+- Foundation for multiple level implementations
+
 ## [0.17.0] - 2025-11-01
 
 ### Added
