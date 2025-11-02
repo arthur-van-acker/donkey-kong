@@ -5,6 +5,144 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.33.0] - 2025-11-02
+
+### Added
+- **AudioManager system** (issue #40)
+  - Complete audio management system with sound loading, playback, and volume control
+  - Sound pooling for concurrent playback of same sound effect (3 instances per sound)
+  - Separate volume controls for master, SFX, and music
+  - Mute/unmute functionality with state persistence
+  - Promise-based async sound loading with loading progress tracking
+  - Support for both sound effects and background music playback
+  - Automatic cleanup and resource management
+- **Sound effects integration** (issue #41)
+  - Jump sound effect (phaseJump1.ogg from Kenney assets)
+  - Barrel roll sound on spawn (impactWood_heavy_002.ogg)
+  - Death sound on life lost (error_007.ogg)
+  - Hammer pickup sound (powerUp2.ogg)
+  - Barrel destroy sound (impactGlass_heavy_004.ogg)
+  - Level complete sound (confirmation_003.ogg)
+- **Sound assets directory** (`assets/sounds/`)
+  - 6 retro-style .ogg sound effects from Kenney Game Assets
+  - All sounds in CC0 public domain license
+- **Audio constants** in Constants.js
+  - Sound file path constants for all 6 effects
+  - Volume level constants (master, music, SFX)
+
+### Changed
+- GameState now initializes AudioManager and loads all sound effects
+- Player.js constructor accepts optional AudioManager parameter for jump sound
+- Sound effects trigger on game events (jump, barrel spawn, death, barrel destroy, hammer pickup, level complete)
+- index.html includes AudioManager.js script tag in systems section
+
+### Technical Details
+- HTML5 Audio API with sound pooling for performance
+- Volume management with master, music, and SFX separation
+- Graceful error handling for missing or failed sound loads
+- Sound playback with optional looping support
+- Clean separation between music (single instance) and SFX (pooled instances)
+- All sounds stored in .ogg format for broad browser compatibility
+
+## [0.32.0] - 2025-11-01
+
+### Added
+- **Custom hammer sprite** (issue #109)
+  - Retro arcade-style hammer SVG design (64×64 pixels)
+  - Wooden mallet with metal bands and power-up glow
+  - SVG source file for future modifications
+
+### Changed
+- Replaced star sprite with proper hammer icon
+- Updated sprite dimensions from 70×70 to 64×64
+- Hammer fallback rendering now draws hammer shape instead of star
+
+### Fixed
+- Hammer sprite cache bust parameter forces browser reload (issue #110)
+- Proper visual indication of hammer power-up
+
+## [0.31.0] - 2025-11-01
+
+### Added
+- **Frame-based barrel rolling animation** (issue #107)
+  - Custom 8-frame barrel sprite sheet (512×64 pixels, 64×64 per frame)
+  - Smooth rolling animation at 12 FPS
+  - SVG source file included for modifications
+  - Animation continues during rolling and falling on ladders
+
+### Changed
+- Replaced rotation-based animation with frame-based sprite animation
+- Updated barrel sprite dimensions from 70×70 to 64×64
+- Removed rotation and rotationSpeed properties from Barrel class
+- Added animationFrame, animationTimer, and animationSpeed properties
+- render() method now draws from sprite sheet instead of rotating canvas
+
+### Fixed
+- Barrel sprite rendering corrected to display all 8 frames properly (issue #108)
+- Improved SVG with explicitly positioned frames (no <use> references)
+- Smooth animation without empty frames
+
+### Technical Details
+- Each frame explicitly defined in sprite sheet
+- Animation cycles through 8 frames continuously
+- No canvas rotation transforms needed (cleaner rendering)
+
+## [0.30.0] - 2025-11-02
+
+### Added
+- **Comprehensive score system** (issue #38)
+  - High score persistence using localStorage
+  - Climbing score tracking (10 points per meter climbed)
+  - Barrel jump detection and scoring (100 points per jump)
+  - Time bonus calculation and award on level completion
+  - High score display in UI alongside current score
+  - POINTS_CLIMBING_PER_METER constant (10 points)
+- **Score tracking methods**
+  - addScore() method with automatic high score saving
+  - Level timer for time bonus calculation
+  - Barrel jumpedOver flag to prevent duplicate jump awards
+  - Automatic high score comparison and update
+
+### Changed
+- GameState tracks climbing height for scoring
+- Barrel entities track if player jumped over them
+- Level completion awards time bonus based on remaining time
+- UI displays both current score and high score
+
+### Technical Details
+- localStorage used for high score persistence across sessions
+- Climbing score calculated from vertical position changes
+- Jump detection uses player-barrel AABB collision with vertical clearance check
+- Time bonus calculated as (remaining seconds × POINTS_TIME_BONUS)
+- High score updates automatically when current score exceeds it
+
+## [0.29.0] - 2025-11-02
+
+### Added
+- **Lives system with respawn mechanics** (issue #39)
+  - Respawn delay mechanism (1.5 seconds via DEATH_ANIMATION_DURATION)
+  - Barrel clearing on respawn for player safety
+  - Respawn countdown display ("RESPAWNING..." with seconds)
+  - Player sprite hidden during respawn delay
+  - loseLife() method to centralize death handling
+  - Game update prevention during respawn sequence
+  - Lives counter display in UI (already existed, now functional)
+  - Game over trigger when lives reach 0 (already existed, now integrated)
+
+### Changed
+- Player death now triggers centralized loseLife() method
+- All barrels cleared when player respawns
+- Respawn delay prevents immediate gameplay after death
+- UI shows respawn countdown during delay
+
+### Technical Details
+- PLAYER_STARTING_LIVES constant determines initial lives (3)
+- DEATH_ANIMATION_DURATION constant sets respawn delay (1.5 seconds)
+- checkPlayerBarrelCollisions() calls loseLife() on collision
+- Respawn state prevents game updates until delay completes
+- Player sprite rendering skipped during respawn
+- Barrel array cleared to prevent instant re-death
+
 ## [0.28.0] - 2025-11-01
 
 ### Added
@@ -833,6 +971,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Project documentation: README.md
 - Git ignore rules for development environment
 
+[0.33.0]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.33.0
+[0.32.0]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.32.0
+[0.31.0]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.31.0
+[0.30.0]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.30.0
+[0.29.0]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.29.0
+[0.28.0]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.28.0
 [0.17.0]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.17.0
 [0.16.0]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.16.0
 [0.15.2]: https://github.com/bearded-wizard/donkey-kong/releases/tag/v0.15.2

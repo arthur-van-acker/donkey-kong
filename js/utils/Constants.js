@@ -226,6 +226,14 @@ const Constants = {
     MASTER_VOLUME: 0.7,
     MUSIC_VOLUME: 0.5,
     SFX_VOLUME: 0.8,
+
+    // Sound file paths
+    SOUND_JUMP: 'assets/sounds/jump.ogg',
+    SOUND_BARREL_ROLL: 'assets/sounds/barrel_roll.ogg',
+    SOUND_DEATH: 'assets/sounds/death.ogg',
+    SOUND_HAMMER_PICKUP: 'assets/sounds/hammer_pickup.ogg',
+    SOUND_BARREL_DESTROY: 'assets/sounds/barrel_destroy.ogg',
+    SOUND_LEVEL_COMPLETE: 'assets/sounds/level_complete.ogg',
 };
 
 // Freeze the object to prevent modifications

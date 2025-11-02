@@ -11,8 +11,9 @@ class Player {
      * @param {number} x - Starting X position
      * @param {number} y - Starting Y position
      * @param {InputHandler} inputHandler - Input handler instance
+     * @param {AudioManager} audioManager - Audio manager instance (optional)
      */
-    constructor(x, y, inputHandler) {
+    constructor(x, y, inputHandler, audioManager = null) {
         // Position
         this.x = x;
         this.y = y;
@@ -25,6 +26,9 @@ class Player {
 
         // Input handler reference
         this.inputHandler = inputHandler;
+
+        // Audio manager reference (issue #41)
+        this.audioManager = audioManager;
 
         // State flags
         this.isOnGround = false;
@@ -473,6 +477,11 @@ class Player {
         this.velocity.y = Constants.JUMP_VELOCITY;
         this.isOnGround = false;
         this.isJumping = true;
+
+        // Play jump sound (issue #41)
+        if (this.audioManager) {
+            this.audioManager.playSound('jump');
+        }
     }
 
     /**
