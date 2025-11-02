@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.43.0] - 2025-11-02
+
+### Added
+- **Rules page with game instructions** (issue #127)
+  - Created standalone rules.html with complete HTML structure
+  - Objective section explaining rescue the princess goal
+  - Controls section documenting all keyboard inputs (arrows, spacebar, P/ESC)
+  - Gameplay section with 3 lives system, 180 second time limit, hammer power-up, invincibility
+  - Scoring system section with all 5 point awards (jump: 100, smash: 300, princess: 1000, time: 10/s, climbing: 10/m)
+  - Strategy tips section for players
+  - Link back to main game with styled arcade button
+  - Reuses page content CSS styling from about.html
+  - Responsive design across all breakpoints (≤768px, ≤480px)
+  - Proper meta tags and page title
+
+### Technical Details
+- All game values accurately referenced from Constants.js
+- Controls: Arrow keys (movement/climbing), Spacebar (jump), P/ESC (pause)
+- Lives: 3 starting lives (PLAYER_STARTING_LIVES)
+- Time limit: 180 seconds (LEVEL_TIME_LIMIT)
+- Invincibility: 2 seconds after hit (INVINCIBILITY_DURATION)
+- Scoring: 100 barrel jump, 300 barrel smash, 1000 princess, 10/s time bonus, 10/m climbing
+- Hammer duration: 10 seconds (HAMMER_DURATION)
+- Reuses .page-content, .section-title, .content-text CSS classes
+- Semantic HTML5 structure with header, sections, and footer
+- Arcade-style instructional language for retro feel
+
 ## [0.41.0] - 2025-11-02
 
 ### Added
