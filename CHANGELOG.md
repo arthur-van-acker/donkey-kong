@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.48.0] - 2025-11-02
+
+### Added
+- **How to Play / Rules page with game instructions** (issue #127)
+  - Created standalone rules.html with complete HTML structure
+  - Objective section: Rescue the princess at the top
+  - Controls section: Arrow keys, climbing, jumping
+  - Gameplay section: Lives system, time limit, avoid barrels
+  - Scoring section: Points breakdown (jumps, completion, bonuses)
+  - Link back to main game with styled arcade button
+  - Comprehensive CSS styling matching retro aesthetic
+  - Responsive design across all breakpoints (≤768px, ≤480px)
+  - Proper meta tags and page title
+
+### Technical Details
+- Reuses .page-content wrapper and section styling from styles.css
+- Section titles with red glow effect matching game aesthetic
+- Content organized with bullet lists for easy scanning
+- Accurate game values from Constants.js (3 lives, 180s limit)
+- Scoring breakdown: 100 pts/barrel, 1000 pts completion, 10 pts/s time bonus
+- Back button styled as arcade-style button with red background
+- Responsive typography matching other pages
+- Maintains retro arcade aesthetic throughout
+- Reuses header and footer components from index.html
+
 ## [0.47.0] - 2025-11-02
 
 ### Added
