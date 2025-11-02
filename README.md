@@ -2,6 +2,8 @@
 
 A classic arcade-style platform climbing game reimplemented using pure HTML, CSS, and JavaScript. Climb the platforms, dodge the barrels, and reach the princess at the top!
 
+**🎮 [Play Live Demo](https://arthur-van-acker.github.io/barrel-blaster/)** | [View Source](https://github.com/arthur-van-acker/barrel-blaster)
+
 ![Barrel Blaster Gameplay](assets/screenshots/gameplay.png)
 
 ## About
@@ -186,9 +188,15 @@ No installation or build process required! Barrel Blaster is built with pure van
 
 ### Quick Start
 
+**Option 1: Play Online (Easiest)**
+
+Just visit the live demo: **[https://arthur-van-acker.github.io/barrel-blaster/](https://arthur-van-acker.github.io/barrel-blaster/)**
+
+**Option 2: Run Locally**
+
 ```bash
 # Clone the repository
-git clone https://github.com/bearded-wizard/barrel-blaster.git
+git clone https://github.com/arthur-van-acker/barrel-blaster.git
 cd barrel-blaster
 
 # Open in browser
