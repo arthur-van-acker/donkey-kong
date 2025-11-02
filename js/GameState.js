@@ -28,6 +28,10 @@ class GameState {
         // Initialize input handler
         this.inputHandler = new InputHandler();
 
+        // Initialize audio manager (issues #40, #41)
+        this.audioManager = new AudioManager();
+        this.initializeAudio();
+
         // Current level number
         this.currentLevelNumber = levelNumber;
 
@@ -41,7 +45,8 @@ class GameState {
         this.player = new Player(
             playerStart.x,
             playerStart.y,
-            this.inputHandler
+            this.inputHandler,
+            this.audioManager
         );
 
         // Initialize DonkeyKong entity (issue #28)
@@ -76,6 +81,25 @@ class GameState {
         this.isRespawning = false;
         this.respawnTimer = 0;
         this.respawnDelay = 1.5; // seconds
+    }
+
+    /**
+     * Initialize audio system and load all sound effects (issues #40, #41)
+     */
+    initializeAudio() {
+        const sounds = {
+            jump: Constants.SOUND_JUMP,
+            barrel_roll: Constants.SOUND_BARREL_ROLL,
+            death: Constants.SOUND_DEATH,
+            hammer_pickup: Constants.SOUND_HAMMER_PICKUP,
+            barrel_destroy: Constants.SOUND_BARREL_DESTROY,
+            level_complete: Constants.SOUND_LEVEL_COMPLETE
+        };
+
+        this.audioManager.loadSounds(sounds)
+            .catch(error => {
+                console.warn('Some sounds failed to load:', error);
+            });
     }
 
     /**
@@ -491,6 +515,11 @@ class GameState {
         const spawnPos = this.donkeyKong.getBarrelSpawnPosition();
         const barrel = new Barrel(spawnPos.x, spawnPos.y);
         this.barrels.push(barrel);
+
+        // Play barrel roll sound (issue #41)
+        if (this.audioManager) {
+            this.audioManager.playSound('barrel_roll');
+        }
     }
 
     /**
@@ -498,6 +527,11 @@ class GameState {
      */
     loseLife() {
         this.lives--;
+
+        // Play death sound (issue #41)
+        if (this.audioManager) {
+            this.audioManager.playSound('death');
+        }
 
         if (this.lives <= 0) {
             // Game over
@@ -549,6 +583,12 @@ class GameState {
                 if (this.player.hasHammer) {
                     barrel.destroy();
                     this.addScore(Constants.POINTS_BARREL_SMASH);
+
+                    // Play barrel destroy sound (issue #41)
+                    if (this.audioManager) {
+                        this.audioManager.playSound('barrel_destroy');
+                    }
+
                     // Continue checking other barrels
                     continue;
                 }
@@ -595,6 +635,11 @@ class GameState {
             const timeBonus = Math.floor(timeRemaining * Constants.POINTS_TIME_BONUS);
             this.addScore(timeBonus);
 
+            // Play level complete sound (issue #41)
+            if (this.audioManager) {
+                this.audioManager.playSound('level_complete');
+            }
+
             // Transition to level complete state
             this.currentState = Constants.STATE_LEVEL_COMPLETE;
         }
@@ -607,6 +652,11 @@ class GameState {
         for (const hammer of this.hammers) {
             if (hammer.checkCollision(this.player)) {
                 this.player.pickupHammer();
+
+                // Play hammer pickup sound (issue #41)
+                if (this.audioManager) {
+                    this.audioManager.playSound('hammer_pickup');
+                }
             }
         }
     }
