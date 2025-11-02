@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.45.0] - 2025-11-02
+
+### Added
+- **Header styling with pixel art accents** (issue #124)
+  - Enhanced game header with retro arcade aesthetic
+  - Pixel art corner accents (16x16 red squares in top corners)
+  - Pixel art divider between title and tagline using gradient pattern
+  - Border and background styling matching game container design
+  - Box shadow with red glow effect for CRT monitor feel
+  - Responsive sizing for all breakpoints (≤1400px, ≤768px, ≤480px)
+  - Enhanced visual hierarchy with proper spacing
+
+### Technical Details
+- Header border: 4px solid #ff0000 with inset shadow
+- Background: #0a0a0a with depth effect
+- Corner accents: Positioned absolutely with nested box-shadows
+- Divider pattern: Linear gradient creating dotted pixel effect (200px wide)
+- Responsive corner sizes: 16px → 12px → 8px
+- Responsive divider width: 200px → 150px → 120px
+- Maximum width: 1280px matching game canvas
+- Maintains monospace font family ('Courier New')
+- Text shadows preserved: red glow for title, cyan for tagline
+
 ## [0.44.0] - 2025-11-02
 
 ### Added
