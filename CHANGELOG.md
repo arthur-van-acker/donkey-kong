@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.68.0] - 2025-11-03
+
+### Added
+
+- **Mobile touch controls testing documentation** (issue #161)
+  - New comprehensive "Mobile Touch Controls" section (section 12) in TESTING.md
+  - **Touch Controls Display subsection** (18 tests):
+    - Visibility & responsive behavior testing (controls show/hide at 768px breakpoint)
+    - Layout & positioning validation (D-pad left, jump button right, no overlaps)
+    - Visual rendering checks (opacity, retro styling, glow effects, scanlines)
+  - **Input Functionality subsection** (32 tests):
+    - D-pad directional input testing (left/right movement, up/down climbing)
+    - Jump button testing (tap for short jump, hold for variable height)
+    - Multi-touch support validation (move + jump simultaneously)
+    - Input edge cases (drag off button, rapid tapping, device rotation)
+    - Virtual joystick testing (8-directional input, dead zone, visual feedback)
+  - **Settings & Customization subsection** (30 tests):
+    - Settings panel accessibility from pause menu
+    - Button size adjustment testing (50%-150% range)
+    - Opacity adjustment testing (40%-100% range)
+    - Haptic feedback validation (vibration patterns, graceful degradation)
+    - Control scheme toggle testing (D-pad/Joystick switching)
+    - Reset to defaults functionality
+  - **Cross-Device Compatibility subsection** (20 tests):
+    - iOS device testing (iPhone/iPad Safari, haptic feedback)
+    - Android device testing (Chrome/Firefox, phones/tablets)
+    - Tablet-specific testing (7-10 inch displays, orientations)
+    - Fallback input methods (Bluetooth keyboard, USB keyboard, desktop)
+  - **Performance subsection** (14 tests):
+    - Frame rate validation (maintain 60 FPS with controls active)
+    - Touch input latency testing (<16ms requirement)
+    - Resource usage monitoring (memory leaks, CPU usage, battery drain)
+    - Device compatibility testing (3+ year old devices, slower CPUs)
+  - Updated section 11 to reference comprehensive section 12
+  - Removed outdated "No touch controls" limitation from Known Limitations
+
 ## [0.66.0] - 2025-11-03
 
 ### Added

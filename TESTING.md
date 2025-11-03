@@ -280,12 +280,161 @@
   - [ ] Mobile (<768px): Canvas fits screen
 
 - [ ] **Touch Controls**
-  - [ ] On-screen controls display on mobile (future feature)
+  - [ ] On-screen controls display on mobile (see section 12 for comprehensive mobile testing)
   - [ ] Game is playable with external keyboard on mobile devices
 
+### 12. Mobile Touch Controls
+
+**Objective**: Comprehensive testing of mobile touch control functionality, display, and customization
+
+#### Touch Controls Display (10+ tests)
+
+- [ ] **Visibility & Responsive Behavior**
+  - [ ] Touch controls visible on mobile devices (viewport width ≤768px)
+  - [ ] Touch controls hidden on desktop devices (viewport width >768px)
+  - [ ] Controls automatically show/hide when resizing browser window across 768px breakpoint
+  - [ ] Controls visible in both portrait and landscape orientations
+  - [ ] Controls maintain visibility when soft keyboard appears (iOS/Android)
+
+- [ ] **Layout & Positioning**
+  - [ ] D-pad positioned in bottom-left corner with appropriate margin
+  - [ ] Jump button positioned in bottom-right corner with appropriate margin
+  - [ ] Controls don't overlap with canvas gameplay area
+  - [ ] Controls don't overlap with each other at any screen size
+  - [ ] Controls don't obstruct critical UI elements (score, lives, timer)
+
+- [ ] **Visual Rendering**
+  - [ ] D-pad renders correctly with all four directional buttons visible
+  - [ ] Jump button renders with appropriate size and shape
+  - [ ] Control opacity matches configured settings (default 60%)
+  - [ ] Retro arcade styling applied (red borders, scanline effects, glow)
+  - [ ] Controls have appropriate visual feedback when pressed (glow intensity increases)
+
+#### Input Functionality (15+ tests)
+
+- [ ] **D-pad Directional Input**
+  - [ ] Tapping D-pad left button moves player left continuously
+  - [ ] Tapping D-pad right button moves player right continuously
+  - [ ] Tapping D-pad up button makes player climb ladder upward
+  - [ ] Tapping D-pad down button makes player climb ladder downward
+  - [ ] Releasing D-pad button stops corresponding movement immediately
+  - [ ] D-pad input responds within 16ms (60 FPS frame time)
+
+- [ ] **Jump Button Input**
+  - [ ] Tapping jump button makes player perform short jump
+  - [ ] Holding jump button makes player perform higher jump (variable jump height)
+  - [ ] Jump input registers immediately without delay
+  - [ ] Jump height correlates correctly with hold duration
+  - [ ] Releasing jump button mid-jump stops upward velocity appropriately
+
+- [ ] **Multi-touch Support**
+  - [ ] Player can move left while jumping simultaneously (left + jump)
+  - [ ] Player can move right while jumping simultaneously (right + jump)
+  - [ ] Player can climb while preparing to jump (up/down + jump)
+  - [ ] All multi-touch combinations work without input conflicts
+  - [ ] No "ghost touches" or input bleeding between controls
+
+- [ ] **Input Edge Cases**
+  - [ ] Dragging finger off button while pressed releases input correctly
+  - [ ] Dragging finger onto button registers as press
+  - [ ] Rapid button tapping doesn't cause input lag or stuck buttons
+  - [ ] Device rotation mid-touch doesn't cause stuck inputs
+  - [ ] Switching tabs and returning doesn't leave inputs active
+
+- [ ] **Alternative Control Scheme: Virtual Joystick**
+  - [ ] Joystick mode displays circular base and draggable thumb
+  - [ ] Dragging thumb in any direction moves player appropriately
+  - [ ] Joystick supports 8-directional input (cardinals + diagonals)
+  - [ ] Dead zone prevents drift when thumb near center
+  - [ ] Joystick returns to center when touch released
+  - [ ] Joystick visual feedback (thumb position, glow) updates in real-time
+
+#### Settings & Customization (8+ tests)
+
+- [ ] **Accessing Settings**
+  - [ ] Settings button accessible from pause menu
+  - [ ] Settings panel opens without dismissing game state
+  - [ ] Settings panel displays all mobile control options
+
+- [ ] **Button Size Adjustment**
+  - [ ] Button size slider available in settings (range: 50%-150%)
+  - [ ] Adjusting size immediately updates control rendering
+  - [ ] Minimum size (50%) keeps controls usable and visible
+  - [ ] Maximum size (150%) doesn't cause controls to overlap or go off-screen
+  - [ ] Size preference persists after closing and reopening game
+
+- [ ] **Opacity Adjustment**
+  - [ ] Opacity slider available in settings (range: 40%-100%)
+  - [ ] Adjusting opacity immediately updates control transparency
+  - [ ] Minimum opacity (40%) keeps controls visible but less obtrusive
+  - [ ] Maximum opacity (100%) provides solid, fully-opaque controls
+  - [ ] Opacity preference persists across browser sessions
+
+- [ ] **Haptic Feedback**
+  - [ ] Haptic feedback toggle available in settings
+  - [ ] Enabling haptics triggers vibration on button press (if device supports)
+  - [ ] Different vibration patterns for different actions (move vs jump)
+  - [ ] Haptic feedback gracefully degrades on unsupported devices (no errors)
+  - [ ] Haptic preference persists across browser sessions
+
+- [ ] **Control Scheme Toggle**
+  - [ ] Control scheme toggle available in settings (D-pad/Joystick)
+  - [ ] Switching control schemes immediately updates display and input handling
+  - [ ] Control scheme preference persists across browser sessions
+
+- [ ] **Reset to Defaults**
+  - [ ] "Reset to Defaults" button available in settings
+  - [ ] Clicking reset restores all settings to default values
+  - [ ] Reset confirmation prompt prevents accidental resets
+
+#### Cross-Device Compatibility (6+ tests)
+
+- [ ] **iOS Devices**
+  - [ ] Touch controls work correctly on iPhone (Safari)
+  - [ ] Touch controls work correctly on iPad (Safari)
+  - [ ] No iOS-specific touch event issues (preventDefault working correctly)
+  - [ ] Performance remains 60 FPS on iOS devices
+  - [ ] Haptic feedback works on supported iOS devices
+
+- [ ] **Android Devices**
+  - [ ] Touch controls work correctly on Android phones (Chrome)
+  - [ ] Touch controls work correctly on Android phones (Firefox)
+  - [ ] Touch controls work correctly on Android tablets
+  - [ ] No Android-specific touch event issues
+  - [ ] Performance remains smooth on mid-range Android devices
+
+- [ ] **Tablet Devices**
+  - [ ] Touch controls scale appropriately on 7-10 inch tablets
+  - [ ] Controls work in both landscape and portrait orientations
+  - [ ] Larger touch targets don't cause accidental inputs
+
+- [ ] **Fallback Input Methods**
+  - [ ] External Bluetooth keyboard still works when touch controls visible
+  - [ ] USB keyboard (via OTG adapter) works correctly on mobile devices
+  - [ ] Desktop keyboard unaffected when testing mobile view with DevTools
+
+#### Performance (5+ tests)
+
+- [ ] **Frame Rate & Responsiveness**
+  - [ ] Game maintains 60 FPS with touch controls active
+  - [ ] No frame drops when pressing multiple buttons simultaneously
+  - [ ] Touch input latency less than 16ms (imperceptible to player)
+  - [ ] Controls render smoothly during transitions (opacity/glow animations)
+
+- [ ] **Resource Usage**
+  - [ ] Touch event listeners don't cause memory leaks during extended play
+  - [ ] Canvas rendering of controls efficient (no unnecessary redraws)
+  - [ ] Touch polling doesn't impact CPU usage significantly
+  - [ ] localStorage operations (saving settings) don't cause lag
+
+- [ ] **Device Compatibility**
+  - [ ] Touch controls work on 3+ year old devices without performance issues
+  - [ ] Game remains playable on devices with slower CPUs (>30 FPS minimum)
+  - [ ] Battery usage reasonable during extended gameplay (no excessive drain)
+
 ## Known Limitations (Not Bugs)
+
 - Only one level currently implemented
-- No touch controls for mobile devices yet
 - High score reset if localStorage is cleared
 - No level select menu
 - No difficulty settings
