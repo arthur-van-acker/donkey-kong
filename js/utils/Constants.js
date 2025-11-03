@@ -250,10 +250,17 @@ const Constants = {
     // ===========================
 
     /**
-     * Size of mobile control buttons in pixels
-     * Used for both width and height of touch buttons
+     * Size of mobile D-pad buttons in pixels
+     * Used for both width and height of D-pad touch buttons
      */
     MOBILE_BUTTON_SIZE: 80,
+
+    /**
+     * Size of mobile jump button in pixels
+     * Larger than D-pad buttons for better thumb accessibility
+     * Used for both width and height of jump button (120px diameter)
+     */
+    MOBILE_JUMP_BUTTON_SIZE: 120,
 
     /**
      * Margin from screen edge for D-pad controls (left side)

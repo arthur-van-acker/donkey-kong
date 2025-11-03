@@ -49,6 +49,7 @@ class MobileControls {
      */
     initializeButtonDefinitions() {
         const buttonSize = this.constants.MOBILE_BUTTON_SIZE;
+        const jumpButtonSize = this.constants.MOBILE_JUMP_BUTTON_SIZE;
         const dpadMargin = this.constants.MOBILE_DPAD_MARGIN;
         const jumpMargin = this.constants.MOBILE_JUMP_MARGIN;
 
@@ -57,9 +58,9 @@ class MobileControls {
         const dpadCenterX = dpadMargin + buttonSize;
         const dpadCenterY = this.constants.CANVAS_HEIGHT - dpadMargin - buttonSize;
 
-        // Jump button positioned in bottom-right corner
-        const jumpX = this.constants.CANVAS_WIDTH - jumpMargin - buttonSize;
-        const jumpY = this.constants.CANVAS_HEIGHT - jumpMargin - buttonSize;
+        // Jump button positioned in bottom-right corner (larger than D-pad)
+        const jumpX = this.constants.CANVAS_WIDTH - jumpMargin - jumpButtonSize;
+        const jumpY = this.constants.CANVAS_HEIGHT - jumpMargin - jumpButtonSize;
 
         return [
             // D-pad buttons
@@ -103,16 +104,16 @@ class MobileControls {
                 borderColor: this.constants.MOBILE_COLOR_DPAD_BORDER,
                 label: '\u25BC' // Down arrow ▼
             },
-            // Jump button
+            // Jump button (larger for better thumb accessibility)
             {
                 type: 'jump',
                 x: jumpX,
                 y: jumpY,
-                width: buttonSize,
-                height: buttonSize,
+                width: jumpButtonSize,
+                height: jumpButtonSize,
                 bgColor: this.constants.MOBILE_COLOR_JUMP_BG,
                 borderColor: this.constants.MOBILE_COLOR_JUMP_BORDER,
-                label: 'A'
+                label: 'JUMP'
             }
         ];
     }
@@ -343,8 +344,10 @@ class MobileControls {
         ctx.globalAlpha = opacity;
 
         // Draw button label (arrow symbols or text)
+        // Scale font size based on button size for consistency
+        const fontSize = button.type === 'jump' ? 28 : 36;
         ctx.fillStyle = this.constants.MOBILE_COLOR_TEXT;
-        ctx.font = 'bold 36px monospace';
+        ctx.font = `bold ${fontSize}px monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(
