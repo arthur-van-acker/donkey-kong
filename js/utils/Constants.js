@@ -470,6 +470,34 @@ const Constants = {
      * Tutorial dismiss button border width in pixels
      */
     TUTORIAL_BUTTON_BORDER: 3,
+
+    // ===========================
+    // RESPONSIVE BUTTON SCALING CONSTANTS (issue #156)
+    // ===========================
+
+    /**
+     * Screen width threshold for small screen detection (pixels)
+     * Screens narrower than this will trigger automatic button scaling
+     * Target: iPhone SE (320px) and other small devices
+     */
+    MOBILE_SMALL_SCREEN_WIDTH: 400,
+
+    /**
+     * Scale increase factor for small screens
+     * 2.5 = 250% of original size in canvas coordinates
+     * Makes buttons larger in canvas space so they remain usable
+     * when canvas is scaled down to fit small viewports
+     * At 320px viewport: 50px D-pad, 75px jump (comfortable touch targets)
+     * Applied multiplicatively with user's size preference
+     */
+    MOBILE_SMALL_SCREEN_SCALE: 2.5,
+
+    /**
+     * Margin scale factor for small screens
+     * Scales margins proportionally with button size
+     * Same factor as button scaling to maintain visual balance
+     */
+    MOBILE_SMALL_SCREEN_MARGIN_SCALE: 2.5,
 };
 
 // Freeze the object to prevent modifications

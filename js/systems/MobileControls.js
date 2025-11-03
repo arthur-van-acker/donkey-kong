@@ -56,9 +56,16 @@ class MobileControls {
         this.handleTouchMove = this.handleTouchMove.bind(this);
         this.handleTouchEnd = this.handleTouchEnd.bind(this);
         this.handleTouchCancel = this.handleTouchCancel.bind(this);
+        this.handleResize = this.handleResize.bind(this);
 
         // Setup touch event listeners on canvas
         this.setupTouchListeners();
+
+        // Setup resize listener for responsive scaling (issue #156)
+        this.setupResizeListener();
+
+        // Track small screen state for resize detection (issue #156)
+        this._wasSmallScreen = this.isSmallScreen();
 
         // Initialize tutorial overlay for first-time mobile users (issue #155)
         this.initializeTutorial();
@@ -75,16 +82,49 @@ class MobileControls {
     }
 
     /**
+     * Detect if screen width is below small screen threshold (issue #156)
+     * Checks actual viewport width, not canvas resolution
+     * @returns {boolean} True if screen width < MOBILE_SMALL_SCREEN_WIDTH
+     */
+    isSmallScreen() {
+        // Use window.innerWidth to check actual device/viewport width
+        return window.innerWidth < this.constants.MOBILE_SMALL_SCREEN_WIDTH;
+    }
+
+    /**
+     * Calculate responsive scale factor based on screen width (issue #156)
+     * Applies additional scaling for very small screens (< 400px)
+     * This is multiplicative with user's size preference
+     * @returns {number} Scale factor (0.8 for small screens, 1.0 otherwise)
+     */
+    getResponsiveScaleFactor() {
+        return this.isSmallScreen() ? this.constants.MOBILE_SMALL_SCREEN_SCALE : 1.0;
+    }
+
+    /**
+     * Calculate responsive margin scale factor (issue #156)
+     * Scales margins proportionally with button size on small screens
+     * @returns {number} Margin scale factor (0.8 for small screens, 1.0 otherwise)
+     */
+    getResponsiveMarginScale() {
+        return this.isSmallScreen() ? this.constants.MOBILE_SMALL_SCREEN_MARGIN_SCALE : 1.0;
+    }
+
+    /**
      * Initialize button definitions with positions, sizes, and types
      * Creates D-pad buttons (left, right, up, down) and jump button
      * @returns {Array} Array of button definition objects
      */
     initializeButtonDefinitions() {
         // Apply size multiplier from settings (issue #151)
-        const buttonSize = this.constants.MOBILE_BUTTON_SIZE * this.sizeMultiplier;
-        const jumpButtonSize = this.constants.MOBILE_JUMP_BUTTON_SIZE * this.sizeMultiplier;
-        const dpadMargin = this.constants.MOBILE_DPAD_MARGIN;
-        const jumpMargin = this.constants.MOBILE_JUMP_MARGIN;
+        // Then apply responsive scaling for small screens (issue #156)
+        const responsiveScale = this.getResponsiveScaleFactor();
+        const responsiveMarginScale = this.getResponsiveMarginScale();
+
+        const buttonSize = this.constants.MOBILE_BUTTON_SIZE * this.sizeMultiplier * responsiveScale;
+        const jumpButtonSize = this.constants.MOBILE_JUMP_BUTTON_SIZE * this.sizeMultiplier * responsiveScale;
+        const dpadMargin = this.constants.MOBILE_DPAD_MARGIN * responsiveMarginScale;
+        const jumpMargin = this.constants.MOBILE_JUMP_MARGIN * responsiveMarginScale;
 
         // Calculate button positions
         // D-pad positioned in bottom-left corner
@@ -178,6 +218,41 @@ class MobileControls {
         this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
         this.canvas.addEventListener('touchend', this.handleTouchEnd, { passive: false });
         this.canvas.addEventListener('touchcancel', this.handleTouchCancel, { passive: false });
+    }
+
+    /**
+     * Setup resize listener for responsive button scaling (issue #156)
+     * Detects window resize and device orientation changes
+     */
+    setupResizeListener() {
+        // Listen for window resize events (includes orientation change)
+        window.addEventListener('resize', this.handleResize);
+    }
+
+    /**
+     * Handle window resize event (issue #156)
+     * Rebuilds button definitions if screen size crosses the small screen threshold
+     */
+    handleResize() {
+        // Only rebuild buttons on mobile devices
+        if (!InputHandler.isMobileDevice()) {
+            return;
+        }
+
+        // Store previous small screen state
+        const wasSmallScreen = this._wasSmallScreen !== undefined ? this._wasSmallScreen : this.isSmallScreen();
+        const isSmallScreen = this.isSmallScreen();
+
+        // Only rebuild if we crossed the threshold
+        if (wasSmallScreen !== isSmallScreen) {
+            this._wasSmallScreen = isSmallScreen;
+
+            // Rebuild button definitions with new scaling
+            this.buttons = this.initializeButtonDefinitions();
+
+            // Reinitialize button states
+            this.initializeButtonStates();
+        }
     }
 
     /**
@@ -672,6 +747,9 @@ class MobileControls {
         this.canvas.removeEventListener('touchmove', this.handleTouchMove);
         this.canvas.removeEventListener('touchend', this.handleTouchEnd);
         this.canvas.removeEventListener('touchcancel', this.handleTouchCancel);
+
+        // Remove resize listener (issue #156)
+        window.removeEventListener('resize', this.handleResize);
 
         // Clear active touches
         this.activeTouches.clear();
