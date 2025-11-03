@@ -42,6 +42,7 @@ Barrel Blaster is an educational reimplementation of classic 1980s arcade platfo
 - **Game state management** (menu, playing, paused, level complete, game over)
 - **Score tracking** with high score persistence
 - **Responsive canvas rendering** at 1280×720 resolution (60 FPS target)
+- **Mobile support** with touch controls (D-pad and jump button) for phones and tablets
 - **Retro arcade aesthetic** with CRT monitor effects and pixel-perfect rendering
 
 ## How to Play
@@ -74,6 +75,8 @@ Your goal is to help the protagonist climb to the top of the construction site a
 
 ## Controls
 
+### Keyboard Controls
+
 | Key | Action | Description |
 |-----|--------|-------------|
 | **←** (Left Arrow) | Move Left | Walk left on platforms and ladders |
@@ -83,9 +86,34 @@ Your goal is to help the protagonist climb to the top of the construction site a
 | **SPACE** | Jump / Confirm | Jump while on platforms, confirm in menus |
 | **P** or **ESC** | Pause / Resume | Pause the game during gameplay, resume when paused |
 
+### Mobile Touch Controls
+
+On mobile devices and tablets, virtual on-screen controls appear automatically for touch-based gameplay:
+
+**D-Pad (Directional Buttons)**:
+
+- **Left/Right**: Move left or right (tap or hold)
+- **Up/Down**: Climb ladders up or down
+
+**Jump Button**:
+
+- **Tap**: Quick tap for short jumps
+- **Hold**: Hold down for higher jumps
+
+**Multi-Touch Support**: Use multiple touches simultaneously (e.g., hold right while tapping jump for running jumps)
+
+**Customization Options** (via ⚙️ settings):
+
+- Adjust button size (50%-150%)
+- Change opacity (40%-100%)
+- Toggle haptic feedback
+- Switch between D-pad and Joystick layouts
+
+For detailed mobile control instructions, see **[How to Play - Mobile Touch Controls](rules.html#mobile-touch-controls)**.
+
 ### Control Tips
 
-- **Variable Jump Height**: Hold SPACE longer for higher jumps, release quickly for shorter hops
+- **Variable Jump Height**: Hold SPACE (or jump button) longer for higher jumps, release quickly for shorter hops
 - **Ladder Climbing**: Stand in front of a ladder (character snaps to center) and press UP or DOWN
 - **Momentum Physics**: Character has acceleration and deceleration - plan your movements
 - **Dodge vs Jump**: Sometimes it's safer to duck under barrels than to jump over them
@@ -475,16 +503,33 @@ Requires modern browsers with:
 - ✅ requestAnimationFrame
 - ✅ Web Audio API (optional for audio)
 - ✅ localStorage (optional for high scores)
+- ✅ Touch Events API (for mobile devices)
 
 **Tested On**:
+
+**Desktop Browsers**:
+
 - Chrome 51+
 - Firefox 54+
 - Safari 10+
 - Edge 79+
 
+**Mobile Browsers**:
+
+- iOS Safari (iPhone, iPad) 10+
+- Android Chrome 51+
+- Android Firefox 54+
+
+**Touch Device Requirements**:
+
+- Touch-enabled screen for mobile controls
+- Multi-touch support for simultaneous directional movement and jumping
+- Haptic feedback support (optional, for vibration on button presses)
+
 **Not Supported**:
+
 - Internet Explorer (no ES6 support)
-- Very old mobile browsers
+- Very old mobile browsers without ES6 or Touch Events API
 
 ## Contributing
 
@@ -657,9 +702,9 @@ Future enhancements planned:
 - [x] Score tracking and high score persistence
 - [x] Princess character at level completion
 - [x] DonkeyKong antagonist with barrel throwing
+- [x] Mobile touch controls
 - [ ] Multiple levels (Level 2, Level 3, etc.)
 - [ ] Full hammer power-up implementation
-- [ ] Mobile touch controls
 - [ ] Difficulty progression
 - [ ] Leaderboard system
 - [ ] Additional power-ups
