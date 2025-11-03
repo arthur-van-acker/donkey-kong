@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.54.0] - 2025-11-03
+
+### Added
+- **Larger jump button for mobile controls** (issue #147)
+  - New `MOBILE_JUMP_BUTTON_SIZE` constant (120px) in Constants.js
+  - Jump button now 120x120 pixels (50% larger than 80px D-pad buttons)
+  - Improved thumb accessibility and ergonomics for mobile gameplay
+  - Enhanced visual hierarchy - jump button clearly distinct from D-pad
+  - Label changed to "JUMP" text for better clarity
+
+### Changed
+- **MobileControls jump button rendering**
+  - Updated `initializeButtonDefinitions()` to use separate size constant for jump button
+  - Jump button positioned in bottom-right with 120px dimensions
+  - Font size adjusted to 28px for "JUMP" text (scaled for larger button)
+  - Maintains retro styling consistency with D-pad (same glow, scanlines, colors)
+  - All visual effects (opacity, press feedback, borders) scale appropriately
+
+### Technical Details
+- Backward compatible - D-pad buttons remain 80x80 pixels
+- Jump button uses dedicated `MOBILE_JUMP_BUTTON_SIZE` constant (not hardcoded)
+- Position calculations updated to account for larger button size
+- Touch hit detection automatically adapts to new button dimensions
+- Zero performance impact - same rendering logic, different dimensions
+- Follows project pattern of centralizing values in Constants.js
+- Retro arcade aesthetic maintained with yellow border and dark background
+
+### Documentation
+- Updated Constants.js documentation for new jump button size constant
+- Added inline comments explaining jump button sizing rationale
+- All acceptance criteria from issue #147 fully met
+
 ## [0.51.0] - 2025-11-03
 
 ### Added
